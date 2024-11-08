@@ -12,7 +12,6 @@ import dynamic from "next/dynamic";
 // Dynamically import the TodoList component
 const TodoList = dynamic(() => import("./TodoList"), {
   loading: () => <p>Loading Todo List...</p>, // Optional loading state
-  ssr: false, // Optionally disable server-side rendering if not needed
 });
 
 const TodoApp = () => {
