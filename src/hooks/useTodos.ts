@@ -8,7 +8,7 @@ import {
 } from "../services/todoService";
 import debounce from "lodash/debounce";
 
-interface Todo {
+export interface Todo {
   id: string;
   title: string;
   completed: boolean;

@@ -1,16 +1,22 @@
 "use client";
 
-// components/TodoApp.tsx
 import { useState } from "react";
 import { useTodos } from "../hooks/useTodos";
+import TodoForm from "./TodoForm";
+import { toast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { AlertCircle } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
+import dynamic from "next/dynamic";
+
+// Dynamically import the TodoList component
+const TodoList = dynamic(() => import("./TodoList"), {
+  loading: () => <p>Loading Todo List...</p>, // Optional loading state
+  ssr: false, // Optionally disable server-side rendering if not needed
+});
 
 const TodoApp = () => {
-  const [newTodoTitle, setNewTodoTitle] = useState("");
-  const [editingTodo, setEditingTodo] = useState<{
-    id: string;
-    title: string;
-  } | null>(null);
-
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const {
     todos,
     isLoading,
@@ -18,104 +24,112 @@ const TodoApp = () => {
     error,
     isAdding,
     isUpdating,
-    isDeleting,
     handleAddTodo,
     handleUpdateTodo,
     handleDeleteTodo,
   } = useTodos();
 
-  // Function to handle adding a new Todo
-  const handleCreateTodo = () => {
-    if (newTodoTitle.trim()) {
-      handleAddTodo(
-        newTodoTitle,
-        () => {
-          setNewTodoTitle(""); // Reset input field after adding
-        },
-        (error) => {
-          console.error("Add Todo Error:", error);
-        }
-      );
-    }
-  };
-
-  // Function to handle updating a Todo
-  const handleUpdateBlur = (id: string, title: string) => {
-    if (title.trim()) {
-      handleUpdateTodo(
-        id,
-        title,
-        false,
-        () => {
-          setEditingTodo(null); // Reset editingTodo after successful update
-        },
-        (error) => {
-          console.error("Update Todo Error:", error);
-        }
-      );
-    }
-  };
-
-  // Function to handle deleting a Todo
-  const handleDelete = (id: string) => {
-    handleDeleteTodo(
-      id,
+  const handleCreateTodo = (title: string) => {
+    handleAddTodo(
+      title,
       () => {
-        console.log("Todo deleted successfully");
+        toast({
+          title: "Todo Added",
+          description: `"${title}" has been successfully added to your list.`,
+        });
       },
       (error) => {
-        console.error("Delete Todo Error:", error);
+        toast({
+          title: "Add Todo Error",
+          description: `Failed to add todo: ${error.message}`,
+        });
       }
     );
   };
 
-  // Show loading or error messages if applicable
-  if (isLoading) return <p>Loading todos...</p>;
-  if (isError)
-    return <p style={{ color: "red" }}>{(error as Error).message}</p>;
+  const handleUpdateBlur = (id: string, title: string) => {
+    handleUpdateTodo(
+      id,
+      title,
+      false,
+      () => {
+        toast({
+          title: "Todo Updated",
+          description: `"${title}" has been updated successfully.`,
+        });
+      },
+      (error) => {
+        toast({
+          title: "Update Todo Error",
+          description: `Failed to update todo: ${error.message}`,
+        });
+      }
+    );
+  };
+
+  const handleDelete = (id: string) => {
+    setDeletingIds((prev) => new Set(prev).add(id));
+    handleDeleteTodo(
+      id,
+      () => {
+        toast({
+          title: "Todo Deleted",
+          description: "Todo has been deleted successfully.",
+        });
+        setDeletingIds((prev) => {
+          const updated = new Set(prev);
+          updated.delete(id);
+          return updated;
+        });
+      },
+      (error) => {
+        toast({
+          title: "Delete Todo Error",
+          description: `Failed to delete todo: ${error.message}`,
+        });
+        setDeletingIds((prev) => {
+          const updated = new Set(prev);
+          updated.delete(id);
+          return updated;
+        });
+      }
+    );
+  };
+
+  if (isLoading) {
+    return <Skeleton className="w-[100px] h-[20px] rounded-full" />;
+  }
+
+  if (isError) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{(error as Error).message}</AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div>
       <h1>Todo List</h1>
-      <input
-        type="text"
-        value={newTodoTitle}
-        onChange={(e) => setNewTodoTitle(e.target.value)}
-        placeholder="Enter new todo..."
-      />
-      <button onClick={handleCreateTodo} disabled={isAdding}>
-        {isAdding ? "Adding..." : "Add"}
-      </button>
-
-      <ul>
-        {todos?.map((todo) => (
-          <li key={todo.id}>
-            {editingTodo?.id === todo.id ? (
-              <input
-                type="text"
-                defaultValue={todo.title}
-                onBlur={(e) => handleUpdateBlur(todo.id, e.target.value)}
-                autoFocus
-              />
-            ) : (
-              <span>{todo.title}</span>
-            )}
-
-            <button onClick={() => handleDelete(todo.id)} disabled={isDeleting}>
-              {isDeleting ? "Deleting..." : "Delete"}
-            </button>
-
-            <button
-              onClick={() => setEditingTodo({ id: todo.id, title: todo.title })}
-              disabled={isUpdating}
-            >
-              {isUpdating && editingTodo?.id === todo.id
-                ? "Updating..."
-                : "Edit"}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <TodoForm onAddTodo={handleCreateTodo} isAdding={isAdding} />
+      {todos && todos.length > 0 ? (
+        <TodoList
+          todos={todos}
+          isDeleting={deletingIds}
+          isUpdating={isUpdating}
+          onDelete={handleDelete}
+          onEdit={handleUpdateBlur}
+        />
+      ) : (
+        <div>
+          <p>No todos available</p>
+          {/* <button onClick={() => handleCreateTodo("Sample Todo")}>
+            Create your first todo!
+          </button> */}
+        </div>
+      )}
     </div>
   );
 };

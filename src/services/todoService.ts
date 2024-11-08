@@ -1,40 +1,86 @@
-// services/todoService.ts
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-export const fetchTodos = async () => {
-  const { data } = await axios.get(
-    "https://61a06a08a647020017613391.mockapi.io/todos"
-  );
-  return data;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+interface ErrorResponse {
+  message: string;
+}
+
+const handleApiError = (error: AxiosError): string => {
+  console.error("API Error:", error);
+
+  // Check if error.response is not null or undefined
+  if (error.response) {
+    const responseData = error.response.data;
+
+    // Ensure responseData is not null or undefined and has a message property
+    if (
+      responseData &&
+      typeof responseData === "object" &&
+      "message" in responseData
+    ) {
+      return (responseData as ErrorResponse).message;
+    } else if (typeof responseData === "string") {
+      return responseData;
+    }
+    return "An error occurred";
+  } else if (error.request) {
+    return "No response from the server";
+  } else {
+    return "Error in setting up the request";
+  }
+};
+
+export const fetchTodos = async (): Promise<Todo[]> => {
+  try {
+    const { data } = await axios.get<Todo[]>(`${API_URL}/todos`);
+    return data;
+  } catch (error) {
+    throw new Error(handleApiError(error as AxiosError));
+  }
 };
 
 export const addTodo = async (newTodo: {
   title: string;
   completed: boolean;
-}) => {
-  const { data } = await axios.post(
-    "https://61a06a08a647020017613391.mockapi.io/todos",
-    newTodo
-  );
-  return data;
+}): Promise<Todo> => {
+  try {
+    const { data } = await axios.post<Todo>(`${API_URL}/todos`, newTodo);
+    return data;
+  } catch (error) {
+    throw new Error(handleApiError(error as AxiosError));
+  }
 };
 
-// Update updateTodo to accept a single object parameter
 export const updateTodo = async ({
   id,
   updatedTodo,
 }: {
   id: string;
   updatedTodo: { title: string; completed: boolean };
-}) => {
-  const { data } = await axios.put(
-    `https://61a06a08a647020017613391.mockapi.io/todos/${id}`,
-    updatedTodo
-  );
-  return data;
+}): Promise<Todo> => {
+  try {
+    const { data } = await axios.put<Todo>(
+      `${API_URL}/todos/${id}`,
+      updatedTodo
+    );
+    return data;
+  } catch (error) {
+    throw new Error(handleApiError(error as AxiosError));
+  }
 };
 
-export const deleteTodo = async (id: string) => {
-  await axios.delete(`https://61a06a08a647020017613391.mockapi.io/todos/${id}`);
-  return id;
+export const deleteTodo = async (id: string): Promise<string> => {
+  try {
+    await axios.delete(`${API_URL}/todos/${id}`);
+    return id;
+  } catch (error) {
+    throw new Error(handleApiError(error as AxiosError));
+  }
 };
