@@ -8,8 +8,8 @@ interface TodoListProps {
   todos: Todo[];
   isDeleting: Set<string>;
   isUpdating: boolean;
-  onDelete: (id: string) => Promise<void>;
-  onEdit: (id: string, title: string) => Promise<void>;
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
   editingTodo: Todo | null;
   setEditingTodo: Dispatch<SetStateAction<Todo | null>>;
 }

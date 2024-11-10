@@ -1,37 +1,177 @@
-import { useState } from "react";
-import { sanitizeInput } from "../utils/sanitize"; // Assuming sanitizeInput is in the utils folder
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { sanitizeInput } from "../utils/sanitize";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Todo } from "@/hooks/useTodos";
+import { ButtonLoading } from "./ButtonLoading";
 
 interface TodoFormProps {
   onAddTodo: (title: string) => Promise<void>;
+  onUpdateTodo: (id: string, title: string) => Promise<void>;
   isAdding: boolean;
+  isUpdating: boolean;
+  isEditing: boolean;
+  editingTodo: Todo | null; // Passed to the form for editing
+  onCancel: () => void;
 }
 
-const TodoForm: React.FC<TodoFormProps> = ({ onAddTodo, isAdding }) => {
-  const [newTodoTitle, setNewTodoTitle] = useState("");
+// Define the type for the ref, which includes `open` and `close` methods
+export interface TodoFormRef {
+  open: () => void;
+  close: () => void;
+}
 
-  const handleCreateTodo = async () => {
-    if (newTodoTitle.trim()) {
-      // Sanitize input before passing to onAddTodo
+const formSchema = z.object({
+  title: z.string().min(2, {
+    message: "Todo title must be at least 2 characters.",
+  }),
+});
+
+const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
+  (
+    {
+      onAddTodo,
+      onUpdateTodo,
+      isAdding,
+      isUpdating,
+      isEditing,
+      editingTodo,
+      onCancel,
+    },
+    ref,
+  ) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        title: "", // Pre-fill title for editing
+      },
+    });
+
+    // Reset form when editingTodo changes
+    useEffect(() => {
+      if (isEditing && editingTodo) {
+        form.reset({ title: editingTodo.title });
+      } else {
+        form.reset({
+          title: "",
+        });
+      }
+    }, [isEditing, editingTodo, form]);
+
+    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+      console.log(isEditing ? "Todo updated:" : "Todo created:", data);
+      const newTodoTitle = data.title;
       const sanitizedTitle = sanitizeInput(newTodoTitle);
-      await onAddTodo(sanitizedTitle);
-      setNewTodoTitle(""); // Reset input after adding
-    }
-  };
 
-  return (
-    <div>
-      <input
-        type="text"
-        aria-label="New todo input"
-        value={newTodoTitle}
-        onChange={(e) => setNewTodoTitle(e.target.value)}
-        placeholder="Enter new todo..."
-      />
-      <button onClick={handleCreateTodo} disabled={isAdding}>
-        {isAdding ? "Adding..." : "Add"}
-      </button>
-    </div>
-  );
-};
+      if (isEditing && editingTodo) {
+        // Update existing Todo
+        await onUpdateTodo(editingTodo.id, sanitizedTitle);
+      } else {
+        // Add new Todo
+        await onAddTodo(sanitizedTitle);
+      }
+
+      // Close the dialog first, then reset form after a short delay
+      setIsOpen(false);
+      setTimeout(() => {
+        form.reset();
+      }, 300); // Adjust the delay (in milliseconds) as needed
+    };
+
+    const handleCancel = () => {
+      // Reset form and close the dialog on cancel
+      setIsOpen(false);
+      setTimeout(() => {
+        form.reset();
+
+        onCancel();
+      }, 300); // Adjust the delay (in milliseconds) as needed
+    };
+
+    useImperativeHandle(ref, () => ({
+      open: () => setIsOpen(true),
+      close: () => setIsOpen(false),
+    }));
+
+    return (
+      <>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Button>New Todo</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>
+                {isEditing ? "Edit Todo" : "Create a New Todo"}
+              </DialogTitle>
+              <DialogDescription>
+                {isEditing
+                  ? "Update the details below to edit your Todo item."
+                  : "Fill in the details below to create a new Todo item."}
+              </DialogDescription>
+            </DialogHeader>
+
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Todo title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    onClick={handleCancel}
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                  <ButtonLoading loading={isAdding || isUpdating}>
+                    {isEditing ? "Update" : "Add"}
+                  </ButtonLoading>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  },
+);
+
+TodoForm.displayName = "TodoForm";
 
 export default TodoForm;

@@ -14,10 +14,10 @@ const queryClient = new QueryClient();
 
 const SkeletonDashboard = () => (
   <div className="space-y-4">
-    <div className="w-full h-12 bg-gray-300 animate-pulse rounded-md"></div>
-    <div className="w-1/4 h-8 bg-gray-300 animate-pulse rounded-md"></div>
-    <div className="w-3/4 h-8 bg-gray-300 animate-pulse rounded-md"></div>
-    <div className="w-1/2 h-10 bg-gray-300 animate-pulse rounded-md"></div>
+    <div className="h-12 w-full animate-pulse rounded-md bg-gray-300"></div>
+    <div className="h-8 w-1/4 animate-pulse rounded-md bg-gray-300"></div>
+    <div className="h-8 w-3/4 animate-pulse rounded-md bg-gray-300"></div>
+    <div className="h-10 w-1/2 animate-pulse rounded-md bg-gray-300"></div>
   </div>
 );
 
@@ -44,12 +44,19 @@ export default function Layout({
         <SkeletonDashboard />
       ) : (
         <>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          <div className="border-b">
+            <div className="flex h-16 items-center px-4">
+              <div className="ml-auto flex items-center space-x-4">
+                <SignedOut>
+                  <SignInButton />
+                </SignedOut>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+              </div>
+            </div>
+          </div>
+
           <QueryClientProvider client={queryClient}>
             {children}
           </QueryClientProvider>
