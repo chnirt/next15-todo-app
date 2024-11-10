@@ -1,5 +1,6 @@
 "use client";
 
+import { ModeToggle } from "@/components/mode-toggle";
 import { cn } from "@/lib/utils";
 import {
   SignedIn,
@@ -50,8 +51,13 @@ export default function Layout({
         <>
           <div className="border-b">
             <div className="flex h-16 items-center px-4">
-              <div>Todo</div>
+              <div>
+                <h3 className="inline-block scroll-m-20 bg-gradient-to-r from-[#a18cd1] to-[#fbc2ea] bg-clip-text text-2xl font-semibold tracking-tight text-transparent">
+                  Todo
+                </h3>
+              </div>
               <div className="ml-auto flex items-center space-x-4">
+                <ModeToggle />
                 <SignedOut>
                   <SignInButton />
                 </SignedOut>

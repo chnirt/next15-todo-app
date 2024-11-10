@@ -5,7 +5,7 @@ import { Todo, useTodos } from "../hooks/useTodos";
 import TodoForm, { TodoFormRef } from "./todo-form";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { AlertCircle, Loader2, MoreHorizontal } from "lucide-react";
+import { AlertCircle, MoreHorizontal } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 // import dynamic from "next/dynamic";
 import {
@@ -37,6 +37,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import Confetti from "react-confetti";
+import GradientButton from "./gradient-button";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -64,6 +65,11 @@ const TodoApp = () => {
     handleDeleteTodo,
   } = useTodos();
 
+  const triggerConfetti = () => {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
+  };
+
   const handleOnAddTodo = (title: string) => {
     return new Promise<void>((resolve, reject) => {
       handleAddTodo(
@@ -73,13 +79,9 @@ const TodoApp = () => {
             title: "Todo Added",
             description: `"${title}" has been successfully added to your list.`,
           });
-          // Trigger confetti on success
-          setShowConfetti(true);
 
-          // Hide confetti after a short time (you can adjust the duration)
-          setTimeout(() => {
-            setShowConfetti(false);
-          }, 3000); // Confetti will disappear after 3 seconds
+          triggerConfetti();
+
           resolve();
         },
         (error) => {
@@ -202,12 +204,12 @@ const TodoApp = () => {
     <div>
       {showConfetti && (
         <Confetti
-          width={window.innerWidth}
-          height={window.innerHeight}
+          className="fixed inset-0 h-full w-full"
           recycle={false}
           numberOfPieces={1000}
         />
       )}
+      
       <div className="flex-1 space-y-4 p-4 pt-2">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -270,7 +272,7 @@ const TodoApp = () => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={2} className="h-24 text-center">
-                    No results.
+                    All done! Relax and enjoy your day!
                   </TableCell>
                 </TableRow>
               )}
@@ -307,18 +309,16 @@ const TodoApp = () => {
             <AlertDialogCancel onClick={() => setIsDialogOpen(false)}>
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="animate-spin" />
-                  Deleting
-                </>
-              ) : (
-                <>Delete</>
-              )}
+            <AlertDialogAction asChild>
+              <GradientButton
+                fromColor="#a18cd1"
+                toColor="#fbc2ea"
+                loading={isDeleting}
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+              >
+                Delete
+              </GradientButton>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
