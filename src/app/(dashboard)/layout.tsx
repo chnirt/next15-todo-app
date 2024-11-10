@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import {
   SignedIn,
   SignedOut,
@@ -37,7 +38,10 @@ export default function Layout({
 
   return (
     <div
-      className={`transition-opacity ${isReady ? "opacity-100" : "opacity-0"}`}
+      className={cn(
+        `transition-opacity ${isReady ? "opacity-100" : "opacity-0"}`,
+        "min-h-dvh w-full",
+      )}
       style={{ transition: "opacity 0.5s ease-in-out" }}
     >
       {!isReady ? (

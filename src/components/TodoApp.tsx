@@ -36,6 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
+import Confetti from "react-confetti";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -46,6 +47,7 @@ const TodoApp = () => {
   // const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const todoIdToDeleteRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoIdToUpdateRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoFormRef = useRef<TodoFormRef>(null);
@@ -71,6 +73,13 @@ const TodoApp = () => {
             title: "Todo Added",
             description: `"${title}" has been successfully added to your list.`,
           });
+          // Trigger confetti on success
+          setShowConfetti(true);
+
+          // Hide confetti after a short time (you can adjust the duration)
+          setTimeout(() => {
+            setShowConfetti(false);
+          }, 3000); // Confetti will disappear after 3 seconds
           resolve();
         },
         (error) => {
@@ -191,6 +200,14 @@ const TodoApp = () => {
 
   return (
     <div>
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={1000}
+        />
+      )}
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
