@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Todo, useTodos } from "../hooks/useTodos";
-import TodoForm, { TodoFormRef } from "./TodoForm";
+import TodoForm, { TodoFormRef } from "./todo-form";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircle, Loader2, MoreHorizontal } from "lucide-react";
@@ -208,7 +208,7 @@ const TodoApp = () => {
           numberOfPieces={1000}
         />
       )}
-      <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex-1 space-y-4 p-4 pt-2">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
           <div className="flex items-center space-x-2">

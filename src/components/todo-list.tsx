@@ -1,6 +1,6 @@
 // components/TodoList.tsx
 import { Todo } from "@/hooks/useTodos";
-import TodoItem from "./TodoItem";
+import TodoItem from "./todo-item";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import { Dispatch, SetStateAction } from "react";
 
