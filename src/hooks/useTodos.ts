@@ -93,7 +93,6 @@ export const useTodos = () => {
               if (onSuccess) onSuccess();
             },
             onError: (error: Error) => {
-              console.log("🚀 ~ useTodos ~ error:", error);
               if (onError) onError(error);
             },
           }

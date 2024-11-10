@@ -2,18 +2,18 @@ import { useState } from "react";
 import { sanitizeInput } from "../utils/sanitize"; // Assuming sanitizeInput is in the utils folder
 
 interface TodoFormProps {
-  onAddTodo: (title: string) => void;
+  onAddTodo: (title: string) => Promise<void>;
   isAdding: boolean;
 }
 
 const TodoForm: React.FC<TodoFormProps> = ({ onAddTodo, isAdding }) => {
   const [newTodoTitle, setNewTodoTitle] = useState("");
 
-  const handleCreateTodo = () => {
+  const handleCreateTodo = async () => {
     if (newTodoTitle.trim()) {
       // Sanitize input before passing to onAddTodo
       const sanitizedTitle = sanitizeInput(newTodoTitle);
-      onAddTodo(sanitizedTitle);
+      await onAddTodo(sanitizedTitle);
       setNewTodoTitle(""); // Reset input after adding
     }
   };

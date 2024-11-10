@@ -2,13 +2,16 @@
 import { Todo } from "@/hooks/useTodos";
 import TodoItem from "./TodoItem";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import { Dispatch, SetStateAction } from "react";
 
 interface TodoListProps {
   todos: Todo[];
   isDeleting: Set<string>;
   isUpdating: boolean;
-  onDelete: (id: string) => void;
-  onEdit: (id: string, title: string) => void;
+  onDelete: (id: string) => Promise<void>;
+  onEdit: (id: string, title: string) => Promise<void>;
+  editingTodo: Todo | null;
+  setEditingTodo: Dispatch<SetStateAction<Todo | null>>;
 }
 
 const TodoList: React.FC<TodoListProps> = ({
@@ -17,6 +20,8 @@ const TodoList: React.FC<TodoListProps> = ({
   isUpdating,
   onDelete,
   onEdit,
+  editingTodo,
+  setEditingTodo,
 }) => {
   return (
     <List
@@ -35,6 +40,8 @@ const TodoList: React.FC<TodoListProps> = ({
               isUpdating={isUpdating}
               onDelete={onDelete}
               onEdit={onEdit}
+              editingTodo={editingTodo}
+              setEditingTodo={setEditingTodo}
             />
           </div>
         );

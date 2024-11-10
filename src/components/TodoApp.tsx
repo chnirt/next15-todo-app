@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTodos } from "../hooks/useTodos";
+import { Todo, useTodos } from "../hooks/useTodos";
 import TodoForm from "./TodoForm";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
@@ -16,6 +16,7 @@ const TodoList = dynamic(() => import("./TodoList"), {
 
 const TodoApp = () => {
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const {
     todos,
     isLoading,
@@ -29,70 +30,82 @@ const TodoApp = () => {
   } = useTodos();
 
   const handleCreateTodo = (title: string) => {
-    handleAddTodo(
-      title,
-      () => {
-        toast({
-          title: "Todo Added",
-          description: `"${title}" has been successfully added to your list.`,
-        });
-      },
-      (error) => {
-        toast({
-          title: "Add Todo Error",
-          description: `Failed to add todo: ${error.message}`,
-        });
-      }
-    );
+    return new Promise<void>((resolve, reject) => {
+      handleAddTodo(
+        title,
+        () => {
+          toast({
+            title: "Todo Added",
+            description: `"${title}" has been successfully added to your list.`,
+          });
+          resolve();
+        },
+        (error) => {
+          toast({
+            title: "Add Todo Error",
+            description: `Failed to add todo: ${error.message}`,
+          });
+          reject(error);
+        }
+      );
+    });
   };
 
   const handleUpdateBlur = (id: string, title: string) => {
-    handleUpdateTodo(
-      id,
-      title,
-      false,
-      () => {
-        toast({
-          title: "Todo Updated",
-          description: `"${title}" has been updated successfully.`,
-        });
-      },
-      (error) => {
-        toast({
-          title: "Update Todo Error",
-          description: `Failed to update todo: ${error.message}`,
-        });
-      }
-    );
+    return new Promise<void>((resolve, reject) => {
+      handleUpdateTodo(
+        id,
+        title,
+        false,
+        () => {
+          toast({
+            title: "Todo Updated",
+            description: `"${title}" has been updated successfully.`,
+          });
+          resolve();
+        },
+        (error) => {
+          toast({
+            title: "Update Todo Error",
+            description: `Failed to update todo: ${error.message}`,
+          });
+          reject(error);
+        }
+      );
+    });
   };
 
   const handleDelete = (id: string) => {
     setDeletingIds((prev) => new Set(prev).add(id));
-    handleDeleteTodo(
-      id,
-      () => {
-        toast({
-          title: "Todo Deleted",
-          description: "Todo has been deleted successfully.",
-        });
-        setDeletingIds((prev) => {
-          const updated = new Set(prev);
-          updated.delete(id);
-          return updated;
-        });
-      },
-      (error) => {
-        toast({
-          title: "Delete Todo Error",
-          description: `Failed to delete todo: ${error.message}`,
-        });
-        setDeletingIds((prev) => {
-          const updated = new Set(prev);
-          updated.delete(id);
-          return updated;
-        });
-      }
-    );
+    return new Promise<void>((resolve, reject) => {
+      handleDeleteTodo(
+        id,
+        () => {
+          toast({
+            title: "Todo Deleted",
+            description: "Todo has been deleted successfully.",
+          });
+          setDeletingIds((prev) => {
+            const updated = new Set(prev);
+            updated.delete(id);
+            return updated;
+          });
+          resolve();
+        },
+        (error) => {
+          toast({
+            title: "Delete Todo Error",
+            description: `Failed to delete todo: ${error.message}`,
+          });
+          setDeletingIds((prev) => {
+            const updated = new Set(prev);
+            updated.delete(id);
+            return updated;
+          });
+          reject(error);
+        }
+      );
+    });
   };
 
   if (isLoading) {
@@ -120,6 +133,8 @@ const TodoApp = () => {
           isUpdating={isUpdating}
           onDelete={handleDelete}
           onEdit={handleUpdateBlur}
+          editingTodo={editingTodo}
+          setEditingTodo={setEditingTodo}
         />
       ) : (
         <div>

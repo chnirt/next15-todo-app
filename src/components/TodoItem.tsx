@@ -1,12 +1,15 @@
-import { memo, useState } from "react";
+import { Todo } from "@/hooks/useTodos";
+import { Dispatch, memo, SetStateAction } from "react";
 
 // components/TodoItem.tsx
 interface TodoItemProps {
-  todo: { id: string; title: string };
+  todo: Todo;
   isDeleting: boolean;
   isUpdating: boolean;
-  onEdit: (id: string, title: string) => void;
+  onEdit: (id: string, title: string) => Promise<void>;
   onDelete: (id: string) => void;
+  editingTodo: Todo | null;
+  setEditingTodo: Dispatch<SetStateAction<Todo | null>>;
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({
@@ -15,21 +18,18 @@ const TodoItem: React.FC<TodoItemProps> = ({
   isUpdating,
   onEdit,
   onDelete,
+  editingTodo,
+  setEditingTodo,
 }) => {
-  const [editingTodo, setEditingTodo] = useState<{
-    id: string;
-    title: string;
-  } | null>(null);
-
-  const handleUpdateBlur = (id: string, title: string) => {
+  const handleUpdateBlur = async (id: string, title: string) => {
     if (title.trim()) {
-      onEdit(id, title);
+      await onEdit(id, title);
       setEditingTodo(null); // Reset editing state
     }
   };
 
   return (
-    <li key={todo.id}>
+    <li key={todo.id} className="flex flex-row">
       {editingTodo?.id === todo.id ? (
         <input
           type="text"
@@ -44,7 +44,13 @@ const TodoItem: React.FC<TodoItemProps> = ({
         {isDeleting ? "Deleting..." : "Delete"}
       </button>
       <button
-        onClick={() => setEditingTodo({ id: todo.id, title: todo.title })}
+        onClick={() =>
+          setEditingTodo({
+            id: todo.id,
+            title: todo.title,
+            completed: todo.completed,
+          })
+        }
         disabled={isUpdating}
       >
         {isUpdating && editingTodo?.id === todo.id ? "Updating..." : "Edit"}
