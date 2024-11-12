@@ -22,11 +22,13 @@ import { MoreHorizontal } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { safeFormatDate } from "@/utils/dateUtils";
 import { Todo } from "@/services/todoService";
+import { Badge } from "./ui/badge";
 
 interface TodoTableProps {
   todos: Todo[];
   openUpdateDialog: (id: string, title: string) => void;
   openDeleteDialog: (id: string) => void;
+  toggleTodoCompletion: (id: string, title: string, completed: boolean) => void; // Handler to toggle completion status
 }
 
 // Wrap TableRow as a motion component
@@ -36,13 +38,15 @@ const TodoTable: React.FC<TodoTableProps> = ({
   todos,
   openUpdateDialog,
   openDeleteDialog,
+  toggleTodoCompletion,
 }) => {
   return (
     <Table>
       <TableCaption>A list of your recent todos.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Title</TableHead>
+          <TableHead className="min-w-[100px]">Title</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead>Updated At</TableHead>
           <TableHead className="text-right">Actions</TableHead>
@@ -59,7 +63,30 @@ const TodoTable: React.FC<TodoTableProps> = ({
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <TableCell className="font-medium">{todo.title}</TableCell>
+                <TableCell
+                  className={`cursor-pointer font-medium ${
+                    todo.completed ? "text-gray-500 line-through" : ""
+                  }`} // Apply line-through style when completed
+                  onClick={() =>
+                    toggleTodoCompletion(todo.id, todo.title, !todo.completed)
+                  } // Toggle completion
+                >
+                  {todo.title}
+                </TableCell>
+
+                <TableCell>
+                  <Badge
+                    variant="outline"
+                    className={`${
+                      todo.completed
+                        ? "bg-gradient-to-r from-indigo-400 to-blue-500 text-white" // Thay đổi gradient cho trạng thái "Completed"
+                        : "bg-gradient-to-r from-pink-400 to-yellow-400 text-white" // Thay đổi gradient cho trạng thái "Pending"
+                    }`}
+                  >
+                    {todo.completed ? "Completed" : "Pending"}
+                  </Badge>
+                </TableCell>
+
                 <TableCell>{safeFormatDate(todo.createdAt)}</TableCell>
                 <TableCell>{safeFormatDate(todo.updatedAt)}</TableCell>
 

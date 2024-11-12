@@ -92,7 +92,7 @@ export const updateTodo = async ({
   updatedTodo,
 }: {
   id: string;
-  updatedTodo: { title: string; completed: boolean };
+  updatedTodo: { title?: string; completed?: boolean };
 }): Promise<Todo> => {
   try {
     const userId = await getUserId();

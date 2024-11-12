@@ -82,10 +82,12 @@ const TodoApp = () => {
 
   const handleOnUpdateTodo = (id: string, title: string) => {
     return new Promise<void>((resolve, reject) => {
+      const updatedTodo = {
+        title,
+      };
       handleUpdateTodo(
         id,
-        title,
-        false,
+        updatedTodo,
         () => {
           toast({
             title: "Todo Updated",
@@ -171,6 +173,51 @@ const TodoApp = () => {
     openForm();
   };
 
+  const toggleTodoCompletion = async (
+    id: string,
+    title: string,
+    completed: boolean,
+  ) => {
+    return new Promise<void>((resolve, reject) => {
+      const updatedTodo = {
+        completed,
+      };
+      handleUpdateTodo(
+        id,
+        updatedTodo,
+        () => {
+          toast({
+            title: "Todo Updated",
+            description: `"${title}" has been updated successfully.`,
+          });
+          setEditingTodo(null);
+          resolve();
+        },
+        (error) => {
+          toast({
+            title: "Update Todo Error",
+            description: `Failed to update todo: ${error.message}`,
+          });
+          reject(error);
+        },
+      );
+    });
+    // try {
+    //   const updatedTodo = await updateTodo({
+    //     id,
+    //     updatedTodo: { completed, title: "" }, // Only update the completed status
+    //   });
+    //   // Update the state or handle the updated todo as needed
+    //   setTodos((prevTodos) =>
+    //     prevTodos.map((todo) =>
+    //       todo.id === id ? { ...todo, completed: updatedTodo.completed } : todo
+    //     )
+    //   );
+    // } catch (error) {
+    //   console.error("Error updating todo:", error);
+    // }
+  };
+
   if (isLoading) {
     return (
       <div className="flex-1 space-y-4 p-4 pt-2">
@@ -227,6 +274,7 @@ const TodoApp = () => {
             todos={todos || []}
             openUpdateDialog={openUpdateDialog}
             openDeleteDialog={openDeleteDialog}
+            toggleTodoCompletion={toggleTodoCompletion}
           />
           {/* {todos && todos.length > 0 ? (
         <TodoList

@@ -17,8 +17,8 @@ interface AddTodoInput {
 interface UpdateTodoInput {
   id: string;
   updatedTodo: {
-    title: string;
-    completed: boolean;
+    title?: string; // Make title optional
+    completed?: boolean; // Make completed optional
   };
 }
 
@@ -97,18 +97,17 @@ export const useTodos = () => {
     300,
   );
 
-  // Update Todo function with debounce
+  // Update Todo function with partial updates (only title or completed)
   const handleUpdateTodo = debounce(
     (
       id: string,
-      title: string,
-      completed: boolean,
+      updatedTodo: { title?: string; completed?: boolean }, // Partial update
       onSuccess?: () => void,
       onError?: (error: Error) => void,
     ) => {
-      if (title.trim()) {
+      if (updatedTodo.title || updatedTodo.completed !== undefined) {
         updateTodoMutation(
-          { id, updatedTodo: { title, completed } },
+          { id, updatedTodo }, // Pass id and updatedTodo
           {
             onSuccess: () => {
               queryClient.invalidateQueries("todos");
