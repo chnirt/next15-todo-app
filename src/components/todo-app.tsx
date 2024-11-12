@@ -5,7 +5,7 @@ import { Todo, useTodos } from "../hooks/useTodos";
 import TodoForm, { TodoFormRef } from "./todo-form";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { AlertCircle, MoreHorizontal } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 // import dynamic from "next/dynamic";
 import {
@@ -18,26 +18,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
+
 import Confetti from "react-confetti";
 import GradientButton from "./gradient-button";
+import TodoTable from "./todo-table";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -187,7 +171,17 @@ const TodoApp = () => {
   };
 
   if (isLoading) {
-    return <Skeleton className="h-[20px] w-[100px] rounded-full" />;
+    return (
+      <div className="flex-1 space-y-4 p-4 pt-2">
+        <div className="flex items-center justify-between space-y-2">
+          <Skeleton className="h-12 w-40" />
+          <Skeleton className="h-12 w-24" />
+        </div>
+        <div>
+          <Skeleton className="h-56 w-full" />
+        </div>
+      </div>
+    );
   }
 
   if (isError) {
@@ -209,7 +203,7 @@ const TodoApp = () => {
           numberOfPieces={1000}
         />
       )}
-      
+
       <div className="flex-1 space-y-4 p-4 pt-2">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -228,56 +222,11 @@ const TodoApp = () => {
         </div>
 
         <div>
-          <Table>
-            <TableCaption>A list of your recent todos.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {todos?.length ? (
-                todos.map((todo) => (
-                  <TableRow key={todo.id}>
-                    <TableCell className="font-medium">{todo.title}</TableCell>
-
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              openUpdateDialog(todo.id, todo.title)
-                            }
-                          >
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => openDeleteDialog(todo.id)}
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={2} className="h-24 text-center">
-                    All done! Relax and enjoy your day!
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <TodoTable
+            todos={todos || []}
+            openUpdateDialog={openUpdateDialog}
+            openDeleteDialog={openDeleteDialog}
+          />
           {/* {todos && todos.length > 0 ? (
         <TodoList
           todos={todos}
