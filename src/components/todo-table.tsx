@@ -62,6 +62,14 @@ const TodoTable: React.FC<TodoTableProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
+                onDoubleClick={() =>
+                  toggleTodoCompletion(todo.id, todo.title, !todo.completed)
+                }
+                onContextMenu={(e) => {
+                  // Long-click / right-click handler
+                  e.preventDefault();
+                  toggleTodoCompletion(todo.id, todo.title, !todo.completed);
+                }}
               >
                 <TableCell
                   className={`cursor-pointer font-medium ${

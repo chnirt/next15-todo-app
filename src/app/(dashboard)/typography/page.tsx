@@ -6,7 +6,10 @@ import Typography from "@/components/ui/typography";
 
 export default function TypographyDemo() {
   return (
-    <div className="p-4 pt-2">
+    <div className="flex-1 space-y-4">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">Typography</h2>
+      </div>
       <Typography variant="h1">
         {/* <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"> */}
         The Joke Tax Chronicles

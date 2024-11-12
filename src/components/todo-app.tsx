@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTodos } from "../hooks/useTodos";
 import TodoForm, { TodoFormRef } from "./todo-form";
 import { toast } from "@/hooks/use-toast";
@@ -23,6 +23,7 @@ import Confetti from "react-confetti";
 import GradientButton from "./gradient-button";
 import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
+import { Badge } from "./ui/badge";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -34,6 +35,8 @@ const TodoApp = () => {
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [completedCount, setCompletedCount] = useState<number>(0);
+  const [showAchievement, setShowAchievement] = useState(false);
   const todoIdToDeleteRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoIdToUpdateRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoFormRef = useRef<TodoFormRef>(null);
@@ -173,6 +176,21 @@ const TodoApp = () => {
     openForm();
   };
 
+  const countCompletedTodos = useCallback(() => {
+    if (todos && todos?.length > 0) {
+      const completedTasks = todos.filter((todo) => todo.completed).length;
+      setCompletedCount(completedTasks);
+    }
+  }, [todos]);
+
+  const triggerAchievement = () => {
+    setShowAchievement(true);
+    toast({
+      title: "Task Master Achieved! 🏅",
+      description: "You’ve unlocked an achievement! 🎉",
+    });
+  };
+
   const toggleTodoCompletion = async (
     id: string,
     title: string,
@@ -187,10 +205,21 @@ const TodoApp = () => {
         updatedTodo,
         () => {
           toast({
-            title: "Todo Updated",
-            description: `"${title}" has been updated successfully.`,
+            title: completed
+              ? `Task Completed! 🎉`
+              : `Task Back to Pending! 🔄`,
+            description: completed
+              ? `"Congrats! "${title}" is now completed. Well done!" 😊`
+              : `"${title}" is back to being pending. Keep going! 💪`,
           });
           setEditingTodo(null);
+
+          if (completed) {
+            countCompletedTodos();
+            if (completedCount + 1 === 2) {
+              triggerAchievement();
+            }
+          }
           resolve();
         },
         (error) => {
@@ -218,9 +247,13 @@ const TodoApp = () => {
     // }
   };
 
+  useEffect(() => {
+    countCompletedTodos();
+  }, [countCompletedTodos]);
+
   if (isLoading) {
     return (
-      <div className="flex-1 space-y-4 p-4 pt-2">
+      <div className="flex-1 space-y-4">
         <div className="flex items-center justify-between space-y-2">
           <Skeleton className="h-12 w-40" />
           <Skeleton className="h-12 w-24" />
@@ -252,7 +285,20 @@ const TodoApp = () => {
         />
       )}
 
-      <div className="flex-1 space-y-4 p-4 pt-2">
+      <div className="flex-1 space-y-4">
+        {/* Show badge when the milestone is reached */}
+        {showAchievement && (
+          <div className="achievement-container">
+            <Badge
+              variant="outline"
+              className="bg-gradient-to-r from-yellow-400 to-red-500 text-white"
+            >
+              Task Master
+            </Badge>
+            <p>You’ve unlocked an achievement!</p>
+          </div>
+        )}
+
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
           <div className="flex items-center space-x-2">

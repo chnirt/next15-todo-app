@@ -75,7 +75,7 @@ export default function Layout({
         <SkeletonDashboard />
       ) : (
         <QueryClientProvider client={queryClient}>
-          {children}
+          <div className="p-4 pt-2">{children}</div>
         </QueryClientProvider>
       )}
     </div>
