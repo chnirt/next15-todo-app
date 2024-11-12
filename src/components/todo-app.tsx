@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Todo, useTodos } from "../hooks/useTodos";
+import { useTodos } from "../hooks/useTodos";
 import TodoForm, { TodoFormRef } from "./todo-form";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
@@ -22,6 +22,7 @@ import {
 import Confetti from "react-confetti";
 import GradientButton from "./gradient-button";
 import TodoTable from "./todo-table";
+import { Todo } from "@/services/todoService";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {

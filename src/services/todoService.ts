@@ -1,11 +1,18 @@
+"use server";
+
+import { auth } from "@clerk/nextjs/server";
 import axios, { AxiosError } from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-interface Todo {
+export interface Todo {
   id: string;
   title: string;
   completed: boolean;
+  createdAt?: string; // added createdAt
+  updatedAt?: string; // added updatedAt
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 interface ErrorResponse {
@@ -15,11 +22,9 @@ interface ErrorResponse {
 const handleApiError = (error: AxiosError): string => {
   console.error("API Error:", error);
 
-  // Check if error.response is not null or undefined
   if (error.response) {
     const responseData = error.response.data;
 
-    // Ensure responseData is not null or undefined and has a message property
     if (
       responseData &&
       typeof responseData === "object" &&
@@ -37,27 +42,51 @@ const handleApiError = (error: AxiosError): string => {
   }
 };
 
+// Get the current user from Clerk and return the userId, or throw an error if not authenticated
+const getUserId = async (): Promise<string> => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated. Please log in.");
+  }
+
+  return userId; // Return the userId if authenticated
+};
+
+// Fetch all Todos for the authenticated user
 export const fetchTodos = async (): Promise<Todo[]> => {
   try {
-    const { data } = await axios.get<Todo[]>(`${API_URL}/todos`);
+    const userId = await getUserId(); // Fetch the userId from Clerk
+    const { data } = await axios.get<Todo[]>(
+      `${API_URL}/todos?createdBy=${userId}`,
+    );
     return data;
   } catch (error) {
     throw new Error(handleApiError(error as AxiosError));
   }
 };
 
+// Add a new Todo and set createdAt and updatedAt
 export const addTodo = async (newTodo: {
   title: string;
   completed: boolean;
 }): Promise<Todo> => {
   try {
-    const { data } = await axios.post<Todo>(`${API_URL}/todos`, newTodo);
+    const userId = await getUserId();
+    const { data } = await axios.post<Todo>(`${API_URL}/todos`, {
+      ...newTodo,
+      createdBy: userId, // Send the userId with the new todo
+      updatedBy: userId, // Send the userId with the new todo
+      createdAt: new Date().toISOString(), // Add createdAt field
+      updatedAt: new Date().toISOString(), // Add updatedAt field
+    });
     return data;
   } catch (error) {
     throw new Error(handleApiError(error as AxiosError));
   }
 };
 
+// Update a Todo and set updatedAt
 export const updateTodo = async ({
   id,
   updatedTodo,
@@ -66,17 +95,21 @@ export const updateTodo = async ({
   updatedTodo: { title: string; completed: boolean };
 }): Promise<Todo> => {
   try {
-    const { data } = await axios.put<Todo>(
-      `${API_URL}/todos/${id}`,
-      updatedTodo
-    );
+    const userId = await getUserId();
+    const { data } = await axios.put<Todo>(`${API_URL}/todos/${id}`, {
+      ...updatedTodo,
+      updatedBy: userId, // Set updatedBy to the userId
+      updatedAt: new Date().toISOString(), // Set updatedAt to the current time
+    });
     return data;
   } catch (error) {
     throw new Error(handleApiError(error as AxiosError));
   }
 };
 
+// Delete a Todo by its id
 export const deleteTodo = async (id: string): Promise<string> => {
+  await getUserId(); // Ensure the user is authenticated
   try {
     await axios.delete(`${API_URL}/todos/${id}`);
     return id;

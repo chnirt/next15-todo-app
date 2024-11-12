@@ -22,8 +22,8 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Todo } from "@/hooks/useTodos";
 import GradientButton from "./gradient-button";
+import { Todo } from "@/services/todoService";
 
 interface TodoFormProps {
   onAddTodo: (title: string) => Promise<void>;

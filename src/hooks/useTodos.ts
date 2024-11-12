@@ -5,14 +5,9 @@ import {
   addTodo,
   updateTodo,
   deleteTodo,
+  Todo,
 } from "../services/todoService";
 import debounce from "lodash/debounce";
-
-export interface Todo {
-  id: string;
-  title: string;
-  completed: boolean;
-}
 
 interface AddTodoInput {
   title: string;
@@ -82,7 +77,7 @@ export const useTodos = () => {
     (
       title: string,
       onSuccess?: () => void,
-      onError?: (error: Error) => void
+      onError?: (error: Error) => void,
     ) => {
       if (title.trim()) {
         addTodoMutation(
@@ -95,11 +90,11 @@ export const useTodos = () => {
             onError: (error: Error) => {
               if (onError) onError(error);
             },
-          }
+          },
         );
       }
     },
-    300
+    300,
   );
 
   // Update Todo function with debounce
@@ -109,7 +104,7 @@ export const useTodos = () => {
       title: string,
       completed: boolean,
       onSuccess?: () => void,
-      onError?: (error: Error) => void
+      onError?: (error: Error) => void,
     ) => {
       if (title.trim()) {
         updateTodoMutation(
@@ -122,18 +117,18 @@ export const useTodos = () => {
             onError: (error: Error) => {
               if (onError) onError(error);
             },
-          }
+          },
         );
       }
     },
-    300
+    300,
   );
 
   // Delete Todo function
   const handleDeleteTodo = (
     id: string,
     onSuccess?: () => void,
-    onError?: (error: Error) => void
+    onError?: (error: Error) => void,
   ) => {
     deleteTodoMutation(id, {
       onSuccess: () => {
