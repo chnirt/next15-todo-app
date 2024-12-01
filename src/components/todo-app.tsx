@@ -19,7 +19,7 @@ import {
 } from "./ui/alert-dialog";
 
 import Confetti from "react-confetti";
-import GradientButton from "./gradient-button";
+// import GradientButton from "./gradient-button";
 import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
 import { Badge } from "./ui/badge";
