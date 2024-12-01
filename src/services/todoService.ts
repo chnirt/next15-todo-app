@@ -25,16 +25,31 @@ const handleApiError = (error: AxiosError): string => {
   if (error.response) {
     const responseData = error.response.data;
 
-    if (
-      responseData &&
-      typeof responseData === "object" &&
-      "message" in responseData
-    ) {
-      return (responseData as ErrorResponse).message;
-    } else if (typeof responseData === "string") {
-      return responseData;
+    const status = error.response.status;
+
+    // Xử lý lỗi cụ thể với mã trạng thái HTTP
+    switch (status) {
+      case 404:
+        return "Resource not found (404). Please check the URL or provided parameters.";
+      case 500:
+        return "Internal server error (500). Please try again later.";
+      case 401:
+        return "Unauthorized access (401). Please log in.";
+      case 403:
+        return "Forbidden access (403). You do not have permission to access this resource.";
+      default:
+        const responseData = error.response.data;
+        if (
+          responseData &&
+          typeof responseData === "object" &&
+          "message" in responseData
+        ) {
+          return (responseData as ErrorResponse).message;
+        } else if (typeof responseData === "string") {
+          return responseData;
+        }
+        return `Unexpected error occurred (HTTP ${status}).`;
     }
-    return "An error occurred";
   } else if (error.request) {
     return "No response from the server";
   } else {
@@ -60,8 +75,13 @@ export const fetchTodos = async (): Promise<Todo[]> => {
     const { data } = await axios.get<Todo[]>(
       `${API_URL}/todos?createdBy=${userId}`,
     );
-    return data;
+    return data || []; // Return empty array if data is null or undefined
   } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 404) {
+      console.warn("Todos not found, returning empty array.");
+      return []; // Return empty array if 404 error occurs
+    }
     throw new Error(handleApiError(error as AxiosError));
   }
 };

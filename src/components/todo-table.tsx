@@ -126,7 +126,7 @@ const TodoTable: React.FC<TodoTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={2} className="h-24 text-center">
+              <TableCell colSpan={5} className="h-24 text-center">
                 All done! Relax and enjoy your day!
               </TableCell>
             </TableRow>

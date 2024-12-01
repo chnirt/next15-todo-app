@@ -1,4 +1,4 @@
-import { Todo } from "@/hooks/useTodos";
+import { Todo } from "@/services/todoService";
 import { Dispatch, memo, SetStateAction } from "react";
 
 // components/TodoItem.tsx

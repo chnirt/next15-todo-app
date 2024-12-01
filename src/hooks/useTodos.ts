@@ -32,8 +32,9 @@ export const useTodos = () => {
     isError,
     error,
   } = useQuery<Todo[], Error>("todos", fetchTodos, {
-    staleTime: 5000,
+    // staleTime: 5000,
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 
   // Add Todo Mutation

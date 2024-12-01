@@ -12,7 +12,6 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -24,6 +23,7 @@ import GradientButton from "./gradient-button";
 import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
 import { Badge } from "./ui/badge";
+import { AnimatedDialogContent } from "./animated-dialog-content";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -341,7 +341,7 @@ const TodoApp = () => {
       </div>
 
       <AlertDialog open={isDialogOpen}>
-        <AlertDialogContent>
+        <AnimatedDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -365,7 +365,7 @@ const TodoApp = () => {
               </GradientButton>
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogContent>
+        </AnimatedDialogContent>
       </AlertDialog>
     </div>
   );

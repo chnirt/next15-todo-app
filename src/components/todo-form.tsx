@@ -2,7 +2,6 @@ import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { sanitizeInput } from "../utils/sanitize";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -24,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import GradientButton from "./gradient-button";
 import { Todo } from "@/services/todoService";
+import { AnimatedDialogContent } from "./animated-dialog-content";
 
 interface TodoFormProps {
   onAddTodo: (title: string) => Promise<void>;
@@ -123,7 +123,10 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
               New Todo
             </GradientButton>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <AnimatedDialogContent
+            type="alert-dialog"
+            className="sm:max-w-[425px]"
+          >
             <DialogHeader>
               <DialogTitle>
                 {isEditing ? "Edit Todo" : "Create a New Todo"}
@@ -172,7 +175,7 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
                 </DialogFooter>
               </form>
             </Form>
-          </DialogContent>
+          </AnimatedDialogContent>
         </Dialog>
       </>
     );
