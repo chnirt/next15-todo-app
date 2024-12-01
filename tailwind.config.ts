@@ -68,11 +68,11 @@ export default {
         },
       },
       animation: {
-        "spin-slow": "spin 3s linear infinite",
+        "border-spin-slow": "border-spin 3s linear infinite",
       },
       backgroundImage: {
         conic:
-          "conic-gradient(from var(--angle), transparent 70%, rgba(var(--primary)))",
+          "conic-gradient(from var(--angle), transparent 70%, hsl(var(--primary)))",
       },
     },
   },

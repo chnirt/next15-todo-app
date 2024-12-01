@@ -24,6 +24,7 @@ import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
 import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
+import { ButtonLoading } from "./button-loading";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -354,7 +355,14 @@ const TodoApp = () => {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction asChild>
-              <GradientButton
+              <ButtonLoading
+                loading={isDeleting}
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+              >
+                Delete
+              </ButtonLoading>
+              {/* <GradientButton
                 fromColor="#a18cd1"
                 toColor="#fbc2ea"
                 loading={isDeleting}
@@ -362,7 +370,7 @@ const TodoApp = () => {
                 disabled={isDeleting}
               >
                 Delete
-              </GradientButton>
+              </GradientButton> */}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AnimatedDialogContent>

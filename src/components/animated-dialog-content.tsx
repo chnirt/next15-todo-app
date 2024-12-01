@@ -21,12 +21,12 @@ export function AnimatedDialogContent({
       <DialogContent
         {...rest}
         className={cn(
-          "flex items-center justify-center overflow-hidden border-none p-0",
+          "flex items-center justify-center overflow-hidden border-none p-[0.125rem]",
           className,
         )}
       >
-        <div className="bg-conic animate-spin-slow absolute -z-10 h-screen w-full"></div>
-        <div className="m-[0.125rem] h-full w-full bg-background p-6 sm:rounded-lg">
+        <div className="bg-conic animate-border-spin-slow absolute -z-10 h-full w-full"></div>
+        <div className="h-full w-full bg-background p-6 sm:rounded-lg">
           {children}
         </div>
       </DialogContent>
@@ -36,12 +36,12 @@ export function AnimatedDialogContent({
     <AlertDialogContent
       {...rest}
       className={cn(
-        "flex items-center justify-center overflow-hidden border-none p-0",
+        "flex items-center justify-center overflow-hidden border-none p-[0.125rem]",
         className,
       )}
     >
-      <div className="bg-conic animate-spin-slow absolute -z-10 h-screen w-full"></div>
-      <div className="m-[0.125rem] h-full w-full bg-background p-6 sm:rounded-lg">
+      <div className="bg-conic animate-border-spin-slow absolute -z-10 h-full w-full"></div>
+      <div className="h-full w-full bg-background p-6 sm:rounded-lg">
         {children}
       </div>
     </AlertDialogContent>

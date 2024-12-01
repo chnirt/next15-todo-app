@@ -21,9 +21,10 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import GradientButton from "./gradient-button";
+// import GradientButton from "./gradient-button";
 import { Todo } from "@/services/todoService";
 import { AnimatedDialogContent } from "./animated-dialog-content";
+import { ButtonLoading } from "./button-loading";
 
 interface TodoFormProps {
   onAddTodo: (title: string) => Promise<void>;
@@ -119,9 +120,10 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
       <>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <GradientButton fromColor="#a18cd1" toColor="#fbc2ea">
+            <Button>New Todo</Button>
+            {/* <GradientButton fromColor="#a18cd1" toColor="#fbc2ea">
               New Todo
-            </GradientButton>
+            </GradientButton> */}
           </DialogTrigger>
           <AnimatedDialogContent
             type="alert-dialog"
@@ -165,13 +167,16 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
                   >
                     Cancel
                   </Button>
-                  <GradientButton
+                  <ButtonLoading loading={isAdding || isUpdating}>
+                    {isEditing ? "Update" : "Add"}
+                  </ButtonLoading>
+                  {/* <GradientButton
                     fromColor="#a18cd1"
                     toColor="#fbc2ea"
                     loading={isAdding || isUpdating}
                   >
                     {isEditing ? "Update" : "Add"}
-                  </GradientButton>
+                  </GradientButton> */}
                 </DialogFooter>
               </form>
             </Form>
