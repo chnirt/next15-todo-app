@@ -28,7 +28,7 @@ export default {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
-        
+
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -59,17 +59,20 @@ export default {
       },
       keyframes: {
         "border-spin": {
-          "100%": {
-            transform: "rotate(-360deg)",
+          from: {
+            "--angle": "0deg",
+          },
+          to: {
+            "--angle": "360deg",
           },
         },
       },
       animation: {
-        "border-spin": "border-spin 7s linear infinite",
+        "spin-slow": "spin 3s linear infinite",
       },
       backgroundImage: {
         conic:
-          "conic-gradient(rgba(244, 114, 182, 0.5) 0deg, rgba(192, 132, 252, 0.5) 0deg, transparent 80deg)",
+          "conic-gradient(from var(--angle), transparent 70%, rgba(var(--primary)))",
       },
     },
   },

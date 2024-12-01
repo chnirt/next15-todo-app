@@ -33,6 +33,7 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --angle: 0deg;
   }
   .dark {
     --background: 224 71.4% 4.1%;
@@ -59,6 +60,8 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+    --angle: 0deg;
 
     /* Name: custom color palette
        Author: Ilias Ism
@@ -105,4 +108,10 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
