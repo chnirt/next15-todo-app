@@ -23,8 +23,6 @@ const handleApiError = (error: AxiosError): string => {
   console.error("API Error:", error);
 
   if (error.response) {
-    const responseData = error.response.data;
-
     const status = error.response.status;
 
     // Xử lý lỗi cụ thể với mã trạng thái HTTP
