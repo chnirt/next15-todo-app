@@ -44,8 +44,8 @@ export const useTodos = () => {
     isError: isAddError,
     error: addError,
   } = useMutation<Todo, Error, AddTodoInput>(addTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+    onSuccess: async () => {
+      await queryClient.invalidateQueries("todos");
     },
   });
 
@@ -56,8 +56,8 @@ export const useTodos = () => {
     isError: isUpdateError,
     error: updateError,
   } = useMutation<Todo, Error, UpdateTodoInput>(updateTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+    onSuccess: async () => {
+      await queryClient.invalidateQueries("todos");
     },
   });
 
@@ -68,8 +68,8 @@ export const useTodos = () => {
     isError: isDeleteError,
     error: deleteError,
   } = useMutation<string, Error, string>(deleteTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+    onSuccess: async () => {
+      await queryClient.invalidateQueries("todos");
     },
   });
 
@@ -85,7 +85,6 @@ export const useTodos = () => {
           { title, completed: false },
           {
             onSuccess: () => {
-              queryClient.invalidateQueries("todos");
               if (onSuccess) onSuccess();
             },
             onError: (error: Error) => {
@@ -111,7 +110,6 @@ export const useTodos = () => {
           { id, updatedTodo }, // Pass id and updatedTodo
           {
             onSuccess: () => {
-              queryClient.invalidateQueries("todos");
               if (onSuccess) onSuccess();
             },
             onError: (error: Error) => {
@@ -132,7 +130,6 @@ export const useTodos = () => {
   ) => {
     deleteTodoMutation(id, {
       onSuccess: () => {
-        queryClient.invalidateQueries("todos");
         if (onSuccess) onSuccess();
       },
       onError: (error: Error) => {

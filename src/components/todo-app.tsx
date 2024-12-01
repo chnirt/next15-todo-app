@@ -37,7 +37,7 @@ const TodoApp = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [completedCount, setCompletedCount] = useState<number>(0);
-  const [showAchievement, setShowAchievement] = useState(false);
+  // const [showAchievement, setShowAchievement] = useState(false);
   const todoIdToDeleteRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoIdToUpdateRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoFormRef = useRef<TodoFormRef>(null);
@@ -185,7 +185,7 @@ const TodoApp = () => {
   }, [todos]);
 
   const triggerAchievement = () => {
-    setShowAchievement(true);
+    // setShowAchievement(true);
     toast({
       title: "Task Master Achieved! 🏅",
       description: "You’ve unlocked an achievement! 🎉",
@@ -288,7 +288,7 @@ const TodoApp = () => {
 
       <div className="flex-1 space-y-4">
         {/* Show badge when the milestone is reached */}
-        {showAchievement && (
+        {/* {showAchievement && (
           <div className="achievement-container">
             <Badge
               variant="outline"
@@ -298,7 +298,7 @@ const TodoApp = () => {
             </Badge>
             <p>You’ve unlocked an achievement!</p>
           </div>
-        )}
+        )} */}
 
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>

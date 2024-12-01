@@ -84,12 +84,12 @@ const TodoTable: React.FC<TodoTableProps> = ({
 
                 <TableCell>
                   <Badge
-                    variant="outline"
-                    className={`${
-                      todo.completed
-                        ? "bg-gradient-to-r from-indigo-400 to-blue-400 text-white" // Thay đổi gradient cho trạng thái "Completed"
-                        : "bg-gradient-to-r from-purple-500 to-pink-500 text-white" // Thay đổi gradient cho trạng thái "Pending"
-                    }`}
+                    variant={todo.completed ? "default" : "outline"}
+                    // className={`${
+                    //   todo.completed
+                    //     ? "bg-gradient-to-r from-indigo-400 to-blue-400 text-white" // Thay đổi gradient cho trạng thái "Completed"
+                    //     : "bg-gradient-to-r from-purple-500 to-pink-500 text-white" // Thay đổi gradient cho trạng thái "Pending"
+                    // }`}
                   >
                     {todo.completed ? "Completed" : "Pending"}
                   </Badge>
