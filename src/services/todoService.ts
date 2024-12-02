@@ -66,13 +66,34 @@ const getUserId = async (): Promise<string> => {
   return userId; // Return the userId if authenticated
 };
 
+const buildUrlWithParams = (
+  baseUrl: string,
+  params: Record<string, string | undefined>,
+) => {
+  const validParams = Object.keys(params)
+    .filter((key) => params[key] !== undefined)
+    .reduce(
+      (acc, key) => {
+        acc[key] = params[key]!;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+  const urlParams = new URLSearchParams(validParams);
+  return `${baseUrl}?${urlParams.toString()}`;
+};
+
 // Fetch all Todos for the authenticated user
-export const fetchTodos = async (): Promise<Todo[]> => {
+export const fetchTodos = async (filter?: string): Promise<Todo[]> => {
   try {
     const userId = await getUserId(); // Fetch the userId from Clerk
-    const { data } = await axios.get<Todo[]>(
-      `${API_URL}/todos?createdBy=${userId}`,
-    );
+    const params = {
+      createdBy: userId,
+      title: filter || undefined, // Set undefined for params that are empty
+    };
+    const url = buildUrlWithParams(`${API_URL}/todos`, params);
+    const { data } = await axios.get<Todo[]>(url);
     return data || []; // Return empty array if data is null or undefined
   } catch (error) {
     const axiosError = error as AxiosError;

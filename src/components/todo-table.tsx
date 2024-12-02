@@ -45,8 +45,8 @@ const TodoTable: React.FC<TodoTableProps> = ({
       <TableCaption>A list of your recent todos.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="min-w-[100px]">Title</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="min-w-[150px]">Title</TableHead>
+          <TableHead className="min-w-[150px]">Status</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead>Updated At</TableHead>
           <TableHead className="text-right">Actions</TableHead>

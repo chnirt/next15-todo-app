@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useTodos } from "../hooks/useTodos";
 import TodoForm, { TodoFormRef } from "./todo-form";
 import { toast } from "@/hooks/use-toast";
@@ -25,6 +25,7 @@ import { Todo } from "@/services/todoService";
 // import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
 import { ButtonLoading } from "./button-loading";
+import { Input } from "./ui/input";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -52,6 +53,8 @@ const TodoApp = () => {
     handleAddTodo,
     handleUpdateTodo,
     handleDeleteTodo,
+    filter,
+    setFilter,
   } = useTodos();
 
   const triggerConfetti = () => {
@@ -248,33 +251,33 @@ const TodoApp = () => {
     // }
   };
 
-  useEffect(() => {
-    countCompletedTodos();
-  }, [countCompletedTodos]);
+  // useEffect(() => {
+  //   countCompletedTodos();
+  // }, [countCompletedTodos]);
 
-  if (isLoading) {
-    return (
-      <div className="flex-1 space-y-4">
-        <div className="flex items-center justify-between space-y-2">
-          <Skeleton className="h-12 w-40" />
-          <Skeleton className="h-12 w-24" />
-        </div>
-        <div>
-          <Skeleton className="h-56 w-full" />
-        </div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex-1 space-y-4">
+  //       <div className="flex items-center justify-between space-y-2">
+  //         <Skeleton className="h-12 w-40" />
+  //         <Skeleton className="h-12 w-24" />
+  //       </div>
+  //       <div>
+  //         <Skeleton className="h-56 w-full" />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{(error as Error).message}</AlertDescription>
-      </Alert>
-    );
-  }
+  // if (isError) {
+  //   return (
+  //     <Alert variant="destructive">
+  //       <AlertCircle className="h-4 w-4" />
+  //       <AlertTitle>Error</AlertTitle>
+  //       <AlertDescription>{(error as Error).message}</AlertDescription>
+  //     </Alert>
+  //   );
+  // }
 
   return (
     <div>
@@ -317,12 +320,37 @@ const TodoApp = () => {
         </div>
 
         <div>
-          <TodoTable
-            todos={todos || []}
-            openUpdateDialog={openUpdateDialog}
-            openDeleteDialog={openDeleteDialog}
-            toggleTodoCompletion={toggleTodoCompletion}
-          />
+          <div className="flex items-center py-4">
+            <Input
+              placeholder="Filter titles..."
+              value={filter ?? ""}
+              onChange={(e) => setFilter(e.target.value)}
+              className="max-w-sm"
+            />
+          </div>
+
+          {isLoading && (
+            <div>
+              <Skeleton className="h-56 w-full" />
+            </div>
+          )}
+
+          {isError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{(error as Error).message}</AlertDescription>
+            </Alert>
+          )}
+
+          {todos && (
+            <TodoTable
+              todos={todos || []}
+              openUpdateDialog={openUpdateDialog}
+              openDeleteDialog={openDeleteDialog}
+              toggleTodoCompletion={toggleTodoCompletion}
+            />
+          )}
           {/* {todos && todos.length > 0 ? (
         <TodoList
           todos={todos}

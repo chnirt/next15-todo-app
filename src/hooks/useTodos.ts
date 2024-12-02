@@ -7,7 +7,9 @@ import {
   deleteTodo,
   Todo,
 } from "../services/todoService";
-import debounce from "lodash/debounce";
+import { useState } from "react";
+import { debounce } from "lodash";
+import { useDebounce } from "use-debounce";
 
 interface AddTodoInput {
   title: string;
@@ -24,6 +26,8 @@ interface UpdateTodoInput {
 
 export const useTodos = () => {
   const queryClient = useQueryClient();
+  const [filter, setFilter] = useState<string>("");
+  const [debouncedFilter] = useDebounce(filter, 300); // 300ms debounce
 
   // Fetch todos
   const {
@@ -31,11 +35,14 @@ export const useTodos = () => {
     isLoading,
     isError,
     error,
-  } = useQuery<Todo[], Error>("todos", fetchTodos, {
-    // staleTime: 5000,
-    refetchOnWindowFocus: false,
-    retry: 1,
-  });
+  } = useQuery<Todo[], Error>(
+    ["todos", debouncedFilter],
+    () => fetchTodos(debouncedFilter),
+    {
+      staleTime: 5000,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   // Add Todo Mutation
   const {
@@ -155,5 +162,7 @@ export const useTodos = () => {
     handleAddTodo,
     handleUpdateTodo,
     handleDeleteTodo,
+    filter,
+    setFilter,
   };
 };
