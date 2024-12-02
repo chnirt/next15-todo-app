@@ -22,7 +22,7 @@ import Confetti from "react-confetti";
 // import GradientButton from "./gradient-button";
 import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
-import { Badge } from "./ui/badge";
+// import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
 import { ButtonLoading } from "./button-loading";
 
