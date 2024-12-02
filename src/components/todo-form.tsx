@@ -24,7 +24,8 @@ import { useForm } from "react-hook-form";
 // import GradientButton from "./gradient-button";
 import { Todo } from "@/services/todoService";
 import { AnimatedDialogContent } from "./animated-dialog-content";
-import { ButtonLoading } from "./button-loading";
+// import { ButtonLoading } from "./button-loading";
+import { RainbowButton } from "./ui/rainbow-button";
 
 interface TodoFormProps {
   onAddTodo: (title: string) => Promise<void>;
@@ -120,7 +121,7 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
       <>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button>New Todo</Button>
+            <RainbowButton>New Todo</RainbowButton>
             {/* <GradientButton fromColor="#a18cd1" toColor="#fbc2ea">
               New Todo
             </GradientButton> */}
@@ -167,9 +168,12 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
                   >
                     Cancel
                   </Button>
-                  <ButtonLoading loading={isAdding || isUpdating}>
+                  <RainbowButton disabled={isAdding || isUpdating}>
                     {isEditing ? "Update" : "Add"}
-                  </ButtonLoading>
+                  </RainbowButton>
+                  {/* <ButtonLoading loading={isAdding || isUpdating}>
+                    {isEditing ? "Update" : "Add"}
+                  </ButtonLoading> */}
                   {/* <GradientButton
                     fromColor="#a18cd1"
                     toColor="#fbc2ea"

@@ -1,6 +1,8 @@
 "use client";
 
 import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
+import SparklesText from "@/components/ui/sparkles-text";
 import { cn } from "@/lib/utils";
 import {
   SignedIn,
@@ -53,12 +55,15 @@ export default function Layout({
       <div className="sticky top-0 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center px-4">
           <div>
-            <h3
+            <Button onClick={goDashboard} variant="ghost">
+              <SparklesText text="Todo" />
+            </Button>
+            {/* <h3
               className="inline-block cursor-pointer scroll-m-20 bg-gradient-to-r from-[#a18cd1] to-[#fbc2ea] bg-clip-text text-2xl font-semibold tracking-tight text-transparent"
               onClick={goDashboard}
             >
               Todo
-            </h3>
+            </h3> */}
           </div>
           <div className="ml-auto flex items-center space-x-4">
             <ModeToggle />

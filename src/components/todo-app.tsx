@@ -24,8 +24,9 @@ import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
 // import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
-import { ButtonLoading } from "./button-loading";
+// import { ButtonLoading } from "./button-loading";
 import { Input } from "./ui/input";
+import { RainbowButton } from "./ui/rainbow-button";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -378,18 +379,24 @@ const TodoApp = () => {
               todo item and remove it from the server.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="space-y-8">
             <AlertDialogCancel onClick={() => setIsDialogOpen(false)}>
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction asChild>
-              <ButtonLoading
+              <RainbowButton
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+              >
+                Delete
+              </RainbowButton>
+              {/* <ButtonLoading
                 loading={isDeleting}
                 onClick={handleConfirmDelete}
                 disabled={isDeleting}
               >
                 Delete
-              </ButtonLoading>
+              </ButtonLoading> */}
               {/* <GradientButton
                 fromColor="#a18cd1"
                 toColor="#fbc2ea"
