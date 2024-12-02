@@ -53,7 +53,7 @@ export default function RootLayout({
     >
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} flex h-dvh items-center justify-center antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} min-h-dvh antialiased`}
         >
           <ThemeProvider
             attribute="class"

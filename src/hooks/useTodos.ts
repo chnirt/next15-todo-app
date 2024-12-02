@@ -84,15 +84,15 @@ export const useTodos = () => {
   const handleAddTodo = debounce(
     (
       title: string,
-      onSuccess?: () => void,
+      onSuccess?: (data: Todo) => void,
       onError?: (error: Error) => void,
     ) => {
       if (title.trim()) {
         addTodoMutation(
           { title, completed: false },
           {
-            onSuccess: () => {
-              if (onSuccess) onSuccess();
+            onSuccess: (data) => {
+              if (onSuccess) onSuccess(data);
             },
             onError: (error: Error) => {
               if (onError) onError(error);

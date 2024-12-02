@@ -19,12 +19,13 @@ import {
 } from "./ui/alert-dialog";
 
 import Confetti from "react-confetti";
-import TodoTable from "./todo-table";
+// import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
 // import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
 import { ButtonLoading } from "./button-loading";
 import { Input } from "./ui/input";
+import DraggableTodo, { DraggableTodoRef } from "./draggable-todo";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -41,6 +42,7 @@ const TodoApp = () => {
   const todoIdToDeleteRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoIdToUpdateRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoFormRef = useRef<TodoFormRef>(null);
+  const draggableTodoRef = useRef<DraggableTodoRef>(null);
   const {
     todos,
     isLoading,
@@ -65,14 +67,13 @@ const TodoApp = () => {
     return new Promise<void>((resolve, reject) => {
       handleAddTodo(
         title,
-        () => {
+        (data) => {
           toast({
             title: "Todo Added",
             description: `"${title}" has been successfully added to your list.`,
           });
-
           triggerConfetti();
-
+          draggableTodoRef.current?.add(data.id);
           resolve();
         },
         (error) => {
@@ -134,6 +135,7 @@ const TodoApp = () => {
           //   return updated;
           // });
           setIsDialogOpen(false); // Close the dialog after deletion
+          draggableTodoRef.current?.delete(id);
           resolve();
         },
         (error) => {
@@ -342,14 +344,25 @@ const TodoApp = () => {
             </Alert>
           )}
 
-          {todos && (
+          {/* {todos && (
             <TodoTable
               todos={todos || []}
               openUpdateDialog={openUpdateDialog}
               openDeleteDialog={openDeleteDialog}
               toggleTodoCompletion={toggleTodoCompletion}
             />
+          )} */}
+
+          {todos && (
+            <DraggableTodo
+              ref={draggableTodoRef}
+              todos={todos || []}
+              openUpdateDialog={openUpdateDialog}
+              openDeleteDialog={openDeleteDialog}
+              toggleTodoCompletion={toggleTodoCompletion}
+            />
           )}
+
           {/* {todos && todos.length > 0 ? (
         <TodoList
           todos={todos}
