@@ -21,11 +21,10 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-// import GradientButton from "./gradient-button";
 import { Todo } from "@/services/todoService";
 import { AnimatedDialogContent } from "./animated-dialog-content";
-// import { ButtonLoading } from "./button-loading";
-import { RainbowButton } from "./ui/rainbow-button";
+import { ShinyButton } from "./ui/shiny-button";
+import { ButtonLoading } from "./button-loading";
 
 interface TodoFormProps {
   onAddTodo: (title: string) => Promise<void>;
@@ -118,10 +117,10 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
     }));
 
     return (
-      <>
+      <div>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <RainbowButton>New Todo</RainbowButton>
+            <ShinyButton>New Todo</ShinyButton>
             {/* <GradientButton fromColor="#a18cd1" toColor="#fbc2ea">
               New Todo
             </GradientButton> */}
@@ -168,25 +167,15 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
                   >
                     Cancel
                   </Button>
-                  <RainbowButton disabled={isAdding || isUpdating}>
+                  <ButtonLoading loading={isAdding || isUpdating}>
                     {isEditing ? "Update" : "Add"}
-                  </RainbowButton>
-                  {/* <ButtonLoading loading={isAdding || isUpdating}>
-                    {isEditing ? "Update" : "Add"}
-                  </ButtonLoading> */}
-                  {/* <GradientButton
-                    fromColor="#a18cd1"
-                    toColor="#fbc2ea"
-                    loading={isAdding || isUpdating}
-                  >
-                    {isEditing ? "Update" : "Add"}
-                  </GradientButton> */}
+                  </ButtonLoading>
                 </DialogFooter>
               </form>
             </Form>
           </AnimatedDialogContent>
         </Dialog>
-      </>
+      </div>
     );
   },
 );

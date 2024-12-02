@@ -19,14 +19,12 @@ import {
 } from "./ui/alert-dialog";
 
 import Confetti from "react-confetti";
-// import GradientButton from "./gradient-button";
 import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
 // import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
-// import { ButtonLoading } from "./button-loading";
+import { ButtonLoading } from "./button-loading";
 import { Input } from "./ui/input";
-import { RainbowButton } from "./ui/rainbow-button";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -384,28 +382,13 @@ const TodoApp = () => {
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction asChild>
-              <RainbowButton
-                onClick={handleConfirmDelete}
-                disabled={isDeleting}
-              >
-                Delete
-              </RainbowButton>
-              {/* <ButtonLoading
+              <ButtonLoading
                 loading={isDeleting}
                 onClick={handleConfirmDelete}
                 disabled={isDeleting}
               >
                 Delete
-              </ButtonLoading> */}
-              {/* <GradientButton
-                fromColor="#a18cd1"
-                toColor="#fbc2ea"
-                loading={isDeleting}
-                onClick={handleConfirmDelete}
-                disabled={isDeleting}
-              >
-                Delete
-              </GradientButton> */}
+              </ButtonLoading>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AnimatedDialogContent>
