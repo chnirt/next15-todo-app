@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "dev:host": "next dev -H 0.0.0.0"
+    "dev:host": "next dev --turbopack -H 0.0.0.0 --port 4000"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.2.1",
@@ -43,6 +43,7 @@
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "use-debounce": "^10.0.4",
+    "uuid": "^11.0.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {

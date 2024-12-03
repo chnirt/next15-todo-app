@@ -61,7 +61,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps>(
         <Card>
           <CardHeader className="p-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <Checkbox
                   checked={todo.completed}
                   onCheckedChange={(checked) =>

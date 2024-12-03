@@ -326,7 +326,7 @@ const TodoApp = () => {
               placeholder="Filter titles..."
               value={filter ?? ""}
               onChange={(e) => setFilter(e.target.value)}
-              className="max-w-sm"
+              className="max-w-full sm:max-w-sm"
             />
           </div>
 
@@ -390,7 +390,7 @@ const TodoApp = () => {
               todo item and remove it from the server.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="space-y-8">
+          <AlertDialogFooter className="space-y-8 sm:space-y-0">
             <AlertDialogCancel onClick={() => setIsDialogOpen(false)}>
               Cancel
             </AlertDialogCancel>
