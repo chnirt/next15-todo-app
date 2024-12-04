@@ -21,6 +21,7 @@ import {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useState,
 } from "react";
 import { CSS } from "@dnd-kit/utilities";
@@ -166,6 +167,22 @@ const DraggableTodo = forwardRef<DraggableTodoRef, DraggableTodoProps>(
   ) => {
     const [activeId, setActiveId] = useState<string | null>(null);
     const [items, setItems] = useState<string[]>(todos.map((todo) => todo.id));
+    const sortedTodos = useMemo(
+      () =>
+        todos.sort((a, b) => {
+          const indexA = items.indexOf(a.id);
+          const indexB = items.indexOf(b.id);
+
+          // If neither todo is in items, keep their order
+          if (indexA === -1 && indexB === -1) return 0;
+          if (indexA === -1) return 1; // a is not in items, move a to the end
+          if (indexB === -1) return -1; // b is not in items, move b to the end
+
+          // If both todos are in items, sort by their position in items
+          return indexA - indexB;
+        }),
+      [todos, items],
+    );
 
     const sensors = useSensors(
       useSensor(MouseSensor),
@@ -209,27 +226,32 @@ const DraggableTodo = forwardRef<DraggableTodoRef, DraggableTodoProps>(
       }
     }, []); // Listen for changes in `todos`
 
-    useImperativeHandle(ref, () => ({
-      add: (id) =>
-        setItems((prevItems) => {
-          // Add the new item at the end of the list
-          const updatedItems = [...prevItems, id];
+    useImperativeHandle(
+      ref,
+      () => ({
+        add: (id) => {
+          setItems((prevItems) => {
+            // Add the new item at the end of the list
+            const updatedItems = [...prevItems, id];
 
-          // Save the updated order to localStorage
-          localStorage.setItem("todosOrder", JSON.stringify(updatedItems));
+            // Save the updated order to localStorage
+            localStorage.setItem("todosOrder", JSON.stringify(updatedItems));
 
-          return updatedItems;
-        }),
-      delete: (id) =>
-        setItems((prevItems) => {
-          const newItems = prevItems.filter((item) => item !== id);
+            return updatedItems;
+          });
+        },
+        delete: (id) =>
+          setItems((prevItems) => {
+            const newItems = prevItems.filter((item) => item !== id);
 
-          // Save new order to localStorage
-          localStorage.setItem("todosOrder", JSON.stringify(newItems));
+            // Save new order to localStorage
+            localStorage.setItem("todosOrder", JSON.stringify(newItems));
 
-          return newItems;
-        }),
-    }));
+            return newItems;
+          }),
+      }),
+      [],
+    );
 
     return (
       <DndContext
@@ -240,18 +262,16 @@ const DraggableTodo = forwardRef<DraggableTodoRef, DraggableTodoProps>(
       >
         <SortableContext items={items} strategy={verticalListSortingStrategy}>
           <div className="space-y-2">
-            {items.map((id) =>
-              todos.some((todo) => todo.id === id) ? (
-                <SortableItem
-                  key={id}
-                  id={id}
-                  todo={todos.find((todo) => todo.id === id)!}
-                  openUpdateDialog={openUpdateDialog}
-                  openDeleteDialog={openDeleteDialog}
-                  toggleTodoCompletion={toggleTodoCompletion}
-                />
-              ) : null,
-            )}
+            {sortedTodos.map((todo) => (
+              <SortableItem
+                key={todo.id}
+                id={todo.id}
+                todo={todo}
+                openUpdateDialog={openUpdateDialog}
+                openDeleteDialog={openDeleteDialog}
+                toggleTodoCompletion={toggleTodoCompletion}
+              />
+            ))}
           </div>
         </SortableContext>
         <DragOverlay>

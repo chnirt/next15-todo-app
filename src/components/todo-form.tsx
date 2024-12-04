@@ -27,8 +27,8 @@ import { ShinyButton } from "./ui/shiny-button";
 import { ButtonLoading } from "./button-loading";
 
 interface TodoFormProps {
-  onAddTodo: (title: string) => Promise<void>;
-  onUpdateTodo: (id: string, title: string) => Promise<void>;
+  onAddTodo: (title: string) => void;
+  onUpdateTodo: (id: string, title: string) => void;
   isAdding: boolean;
   isUpdating: boolean;
   isEditing: boolean;
@@ -81,17 +81,17 @@ const TodoForm = forwardRef<TodoFormRef, TodoFormProps>(
       }
     }, [isEditing, editingTodo, form]);
 
-    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
       console.log(isEditing ? "Todo updated:" : "Todo created:", data);
       const newTodoTitle = data.title;
       const sanitizedTitle = sanitizeInput(newTodoTitle);
 
       if (isEditing && editingTodo) {
         // Update existing Todo
-        await onUpdateTodo(editingTodo.id, sanitizedTitle);
+        onUpdateTodo(editingTodo.id, sanitizedTitle);
       } else {
         // Add new Todo
-        await onAddTodo(sanitizedTitle);
+        onAddTodo(sanitizedTitle);
       }
 
       // Close the dialog first, then reset form after a short delay

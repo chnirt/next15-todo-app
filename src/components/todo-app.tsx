@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { useTodos } from "../hooks/useTodos";
 import TodoForm, { TodoFormRef } from "./todo-form";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
@@ -24,8 +23,14 @@ import { Todo } from "@/services/todoService";
 // import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
 import { ButtonLoading } from "./button-loading";
-import { Input } from "./ui/input";
+// import { Input } from "./ui/input";
 import DraggableTodo, { DraggableTodoRef } from "./draggable-todo";
+import {
+  useCreateTodo,
+  useDeleteTodo,
+  useUpdateTodo,
+  useTodos,
+} from "@/hooks/useTodo";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -43,76 +48,64 @@ const TodoApp = () => {
   const todoIdToUpdateRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoFormRef = useRef<TodoFormRef>(null);
   const draggableTodoRef = useRef<DraggableTodoRef>(null);
-  const {
-    todos,
-    isLoading,
-    isError,
-    error,
-    isAdding,
-    isDeleting,
-    isUpdating,
-    handleAddTodo,
-    handleUpdateTodo,
-    handleDeleteTodo,
-    filter,
-    setFilter,
-  } = useTodos();
+  const { data: todos, isLoading, isError, error } = useTodos();
+  const { mutate: createTodo, isLoading: isAdding } = useCreateTodo();
+  const { mutate: updateTodo, isLoading: isUpdating } = useUpdateTodo();
+  const { mutate: deleteTodo, isLoading: isDeleting } = useDeleteTodo();
 
   const triggerConfetti = () => {
     setShowConfetti(true);
     setTimeout(() => setShowConfetti(false), 3000);
   };
 
-  const handleOnAddTodo = (title: string) => {
-    return new Promise<void>((resolve, reject) => {
-      handleAddTodo(
-        title,
-        (data) => {
-          toast({
-            title: "Todo Added",
-            description: `"${title}" has been successfully added to your list.`,
-          });
-          triggerConfetti();
-          draggableTodoRef.current?.add(data.id);
-          resolve();
-        },
-        (error) => {
-          toast({
-            title: "Add Todo Error",
-            description: `Failed to add todo: ${error.message}`,
-          });
-          reject(error);
+  const handleOnAddTodo = useCallback(
+    (title: string) => {
+      createTodo(
+        { title, completed: false },
+        {
+          onSuccess: (data) => {
+            toast({
+              title: "Todo Added",
+              description: `"${data.title}" has been successfully added to your list.`,
+            });
+            triggerConfetti();
+            draggableTodoRef.current?.add(data.id);
+          },
+          onError: (error) => {
+            toast({
+              title: "Add Todo Error",
+              description: `Failed to add todo: ${error.message}`,
+            });
+          },
         },
       );
-    });
-  };
+    },
+    [createTodo],
+  );
 
-  const handleOnUpdateTodo = (id: string, title: string) => {
-    return new Promise<void>((resolve, reject) => {
-      const updatedTodo = {
-        title,
-      };
-      handleUpdateTodo(
-        id,
-        updatedTodo,
-        () => {
-          toast({
-            title: "Todo Updated",
-            description: `"${title}" has been updated successfully.`,
-          });
-          setEditingTodo(null);
-          resolve();
-        },
-        (error) => {
-          toast({
-            title: "Update Todo Error",
-            description: `Failed to update todo: ${error.message}`,
-          });
-          reject(error);
+  const handleOnUpdateTodo = useCallback(
+    (id: string, title: string) => {
+      updateTodo(
+        { id, updatedTodo: { title } },
+        {
+          onSuccess: () => {
+            toast({
+              title: "Todo Updated",
+              description: `"${title}" has been updated successfully.`,
+            });
+            setEditingTodo(null);
+          },
+          onError: (error) => {
+            toast({
+              title: "Update Todo Error",
+              description: `Failed to update todo: ${error.message}`,
+            });
+          },
         },
       );
-    });
-  };
+    },
+    [updateTodo],
+  );
 
   const handleOnCancel = () => {
     setEditingTodo(null);
@@ -121,37 +114,26 @@ const TodoApp = () => {
 
   const handleDelete = (id: string) => {
     // setDeletingIds((prev) => new Set(prev).add(id));
-    return new Promise<void>((resolve, reject) => {
-      handleDeleteTodo(
-        id,
-        () => {
-          toast({
-            title: "Todo Deleted",
-            description: "Todo has been deleted successfully.",
-          });
-          // setDeletingIds((prev) => {
-          //   const updated = new Set(prev);
-          //   updated.delete(id);
-          //   return updated;
-          // });
-          setIsDialogOpen(false); // Close the dialog after deletion
-          draggableTodoRef.current?.delete(id);
-          resolve();
-        },
-        (error) => {
-          toast({
-            title: "Delete Todo Error",
-            description: `Failed to delete todo: ${error.message}`,
-          });
-          // setDeletingIds((prev) => {
-          //   const updated = new Set(prev);
-          //   updated.delete(id);
-          //   setIsDialogOpen(false); // Close the dialog even on error
-          //   return updated;
-          // });
-          reject(error);
-        },
-      );
+    deleteTodo(id, {
+      onSuccess: () => {
+        toast({
+          title: "Todo Deleted",
+          description: "Todo has been deleted successfully.",
+        });
+        // setDeletingIds((prev) => {
+        //   const updated = new Set(prev);
+        //   updated.delete(id);
+        //   return updated;
+        // });
+        setIsDialogOpen(false); // Close the dialog after deletion
+        draggableTodoRef.current?.delete(id);
+      },
+      onError: (error) => {
+        toast({
+          title: "Delete Todo Error",
+          description: `Failed to delete todo: ${error.message}`,
+        });
+      },
     });
   };
 
@@ -196,61 +178,40 @@ const TodoApp = () => {
     });
   };
 
-  const toggleTodoCompletion = async (
-    id: string,
-    title: string,
-    completed: boolean,
-  ) => {
-    return new Promise<void>((resolve, reject) => {
-      const updatedTodo = {
-        completed,
-      };
-      handleUpdateTodo(
-        id,
-        updatedTodo,
-        () => {
-          toast({
-            title: completed
-              ? `Task Completed! 🎉`
-              : `Task Back to Pending! 🔄`,
-            description: completed
-              ? `"Congrats! "${title}" is now completed. Well done!" 😊`
-              : `"${title}" is back to being pending. Keep going! 💪`,
-          });
-          setEditingTodo(null);
+  const toggleTodoCompletion = useCallback(
+    async (id: string, title: string, completed: boolean) => {
+      updateTodo(
+        { id, updatedTodo: { completed } },
+        {
+          onSuccess: () => {
+            toast({
+              title: completed
+                ? `Task Completed! 🎉`
+                : `Task Back to Pending! 🔄`,
+              description: completed
+                ? `"Congrats! "${title}" is now completed. Well done!" 😊`
+                : `"${title}" is back to being pending. Keep going! 💪`,
+            });
+            setEditingTodo(null);
 
-          if (completed) {
-            countCompletedTodos();
-            if (completedCount + 1 === 2) {
-              triggerAchievement();
+            if (completed) {
+              countCompletedTodos();
+              if (completedCount + 1 === 2) {
+                triggerAchievement();
+              }
             }
-          }
-          resolve();
-        },
-        (error) => {
-          toast({
-            title: "Update Todo Error",
-            description: `Failed to update todo: ${error.message}`,
-          });
-          reject(error);
+          },
+          onError: (error) => {
+            toast({
+              title: "Update Todo Error",
+              description: `Failed to update todo: ${error.message}`,
+            });
+          },
         },
       );
-    });
-    // try {
-    //   const updatedTodo = await updateTodo({
-    //     id,
-    //     updatedTodo: { completed, title: "" }, // Only update the completed status
-    //   });
-    //   // Update the state or handle the updated todo as needed
-    //   setTodos((prevTodos) =>
-    //     prevTodos.map((todo) =>
-    //       todo.id === id ? { ...todo, completed: updatedTodo.completed } : todo
-    //     )
-    //   );
-    // } catch (error) {
-    //   console.error("Error updating todo:", error);
-    // }
-  };
+    },
+    [completedCount, countCompletedTodos, updateTodo],
+  );
 
   // useEffect(() => {
   //   countCompletedTodos();
@@ -321,14 +282,14 @@ const TodoApp = () => {
         </div>
 
         <div>
-          <div className="flex items-center py-4">
+          {/* <div className="flex items-center py-4">
             <Input
               placeholder="Filter titles..."
               value={filter ?? ""}
               onChange={(e) => setFilter(e.target.value)}
               className="max-w-full sm:max-w-sm"
             />
-          </div>
+          </div> */}
 
           {isLoading && (
             <div>
