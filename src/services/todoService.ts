@@ -20,11 +20,12 @@ export interface Todo {
 // CRUD Operations
 
 // 1. Fetch all Todos for the authenticated user
-export const getTodos = async (): Promise<Todo[]> => {
+export const getTodos = async (filter?: string): Promise<Todo[]> => {
   try {
     const userId = await getUserId();
     const params = {
       createdBy: userId,
+      title: filter,
     };
     const url = buildUrlWithParams(`${API_URL}/todos`, params);
     const { data } = await axios.get<Todo[]>(url);

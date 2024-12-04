@@ -16,14 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
-
+import { useDebounce } from "use-debounce";
 import Confetti from "react-confetti";
 // import TodoTable from "./todo-table";
 import { Todo } from "@/services/todoService";
 // import { Badge } from "./ui/badge";
 import { AnimatedDialogContent } from "./animated-dialog-content";
 import { ButtonLoading } from "./button-loading";
-// import { Input } from "./ui/input";
+import { Input } from "./ui/input";
 import DraggableTodo, { DraggableTodoRef } from "./draggable-todo";
 import {
   useCreateTodo,
@@ -48,10 +48,15 @@ const TodoApp = () => {
   const todoIdToUpdateRef = useRef<string | null>(null); // Use ref to store the todo ID for deletion
   const todoFormRef = useRef<TodoFormRef>(null);
   const draggableTodoRef = useRef<DraggableTodoRef>(null);
-  const { data: todos, isLoading, isError, error } = useTodos();
-  const { mutate: createTodo, isLoading: isAdding } = useCreateTodo();
-  const { mutate: updateTodo, isLoading: isUpdating } = useUpdateTodo();
-  const { mutate: deleteTodo, isLoading: isDeleting } = useDeleteTodo();
+  const [filter, setFilter] = useState<string>("");
+  const [debouncedFilter] = useDebounce(filter, 300);
+  const { data: todos, isLoading, isError, error } = useTodos(debouncedFilter);
+  const { mutate: createTodo, isLoading: isAdding } =
+    useCreateTodo(debouncedFilter);
+  const { mutate: updateTodo, isLoading: isUpdating } =
+    useUpdateTodo(debouncedFilter);
+  const { mutate: deleteTodo, isLoading: isDeleting } =
+    useDeleteTodo(debouncedFilter);
 
   const triggerConfetti = () => {
     setShowConfetti(true);
@@ -282,14 +287,15 @@ const TodoApp = () => {
         </div>
 
         <div>
-          {/* <div className="flex items-center py-4">
+          <div className="flex items-center py-4">
             <Input
               placeholder="Filter titles..."
               value={filter ?? ""}
               onChange={(e) => setFilter(e.target.value)}
               className="max-w-full sm:max-w-sm"
+              type="search"
             />
-          </div> */}
+          </div>
 
           {isLoading && (
             <div>
