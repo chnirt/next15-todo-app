@@ -193,7 +193,8 @@ const DraggableTodo = forwardRef<DraggableTodoRef, DraggableTodoProps>(
     );
 
     const handleDragStart = (event: { active: { id: UniqueIdentifier } }) => {
-      setActiveId(String(event.active.id));
+      const eventActiveId = String(event.active.id);
+      setActiveId(eventActiveId);
     };
 
     const handleDragEnd = (event: {
