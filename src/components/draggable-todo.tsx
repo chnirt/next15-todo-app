@@ -45,7 +45,7 @@ interface ItemProps {
   toggleTodoCompletion: (id: string, title: string, completed: boolean) => void;
 }
 
-const Item = forwardRef<HTMLDivElement, ItemProps>(
+export const Item = forwardRef<HTMLDivElement, ItemProps>(
   (
     {
       todo,
