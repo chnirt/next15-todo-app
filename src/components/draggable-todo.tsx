@@ -63,6 +63,9 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
           <CardHeader className="p-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" {...props}>
+                  <GripVertical />
+                </Button>
                 <Checkbox
                   checked={todo.completed}
                   onCheckedChange={(checked) =>
@@ -85,9 +88,6 @@ export const Item = forwardRef<HTMLDivElement, ItemProps>(
                   onClick={() => openDeleteDialog(todo.id)}
                 >
                   <Trash2 />
-                </Button>
-                <Button variant="ghost" size="icon" {...props}>
-                  <GripVertical />
                 </Button>
               </div>
             </div>

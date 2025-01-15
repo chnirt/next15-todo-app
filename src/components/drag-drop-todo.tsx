@@ -9,6 +9,8 @@ import {
   DragOverlay,
   MouseSensor,
   TouchSensor,
+  DragStartEvent,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { Card, CardHeader, CardTitle } from "./ui/card";
@@ -31,7 +33,7 @@ interface DraggableItemProps {
   isOverlay?: boolean;
 }
 
-const DragDropList: React.FC = () => {
+const DragDropTodo: React.FC = () => {
   const [items, setItems] = useState<Item[]>([
     { id: "1", name: "Node 1" },
     { id: "2", name: "Node 2" },
@@ -60,12 +62,12 @@ const DragDropList: React.FC = () => {
   const sensors = useSensors(mouseSensor, touchSensor);
 
   // Handle when drag starts
-  const handleDragStart = (event: any) => {
-    setActiveId(event.active.id); // Store the ID of the dragged item
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(String(event.active.id)); // Store the ID of the dragged item
   };
 
   // Handle when drag ends
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     setActiveId(null); // Reset active state
@@ -73,7 +75,7 @@ const DragDropList: React.FC = () => {
     if (!active || !over) return; // No valid drag or drop
 
     const activeId = active.id;
-    const overId = over.id.split("-")[0];
+    const overId = String(over.id).split("-")[0];
 
     if (activeId === overId) return; // Same item, no change
 
@@ -82,8 +84,8 @@ const DragDropList: React.FC = () => {
 
     if (oldIndex === -1 || overIndex === -1) return; // Invalid indices
 
-    const isTopDrop = over.id.endsWith("-top");
-    const isBottomDrop = over.id.endsWith("-bottom");
+    const isTopDrop = overId.endsWith("-top");
+    const isBottomDrop = overId.endsWith("-bottom");
 
     let newIndex = overIndex; // Calculate new position
     if (isTopDrop) {
@@ -211,4 +213,4 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
   );
 };
 
-export default DragDropList;
+export default DragDropTodo;

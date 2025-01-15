@@ -31,7 +31,7 @@ import {
   useUpdateTodo,
   useTodos,
 } from "@/hooks/useTodo";
-// import TreeSortableTodo from "./tree-sortable-todo";
+// import DragDropTodo from "./drag-drop-todo2";
 
 // // Dynamically import the TodoList component
 // const TodoList = dynamic(() => import("./TodoList"), {
@@ -321,17 +321,36 @@ const TodoApp = () => {
             />
           )} */}
 
-          {todos && (
-            <DraggableTodo
-              ref={draggableTodoRef}
-              todos={todos || []}
-              openUpdateDialog={openUpdateDialog}
-              openDeleteDialog={openDeleteDialog}
-              toggleTodoCompletion={toggleTodoCompletion}
-            />
-          )}
+          <div className="space-y-2">
+            {todos && (
+              <DraggableTodo
+                ref={draggableTodoRef}
+                todos={todos || []}
+                openUpdateDialog={openUpdateDialog}
+                openDeleteDialog={openDeleteDialog}
+                toggleTodoCompletion={toggleTodoCompletion}
+              />
+            )}
 
-          {/* <TreeSortableTodo /> */}
+            {/* <DragDropTodo
+              data={[
+                {
+                  id: "1",
+                  name: "Node 1",
+                  children: [
+                    { id: "1-1", name: "Node 1-1" },
+                    { id: "1-2", name: "Node 1-2" },
+                  ],
+                },
+                { id: "2", name: "Node 2" },
+                {
+                  id: "3",
+                  name: "Node 3",
+                  children: [{ id: "3-1", name: "Node 3-1" }],
+                },
+              ]}
+            /> */}
+          </div>
 
           {/* {todos && todos.length > 0 ? (
         <TodoList

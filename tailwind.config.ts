@@ -77,11 +77,17 @@ export default {
   				'100%': {
   					'background-position': '200%'
   				}
+  			},
+  			'border-beam': {
+  				'100%': {
+  					'offset-distance': '100%'
+  				}
   			}
   		},
   		animation: {
   			'border-spin-slow': 'border-spin 3s linear infinite',
-  			rainbow: 'rainbow var(--speed, 2s) infinite linear'
+  			rainbow: 'rainbow var(--speed, 2s) infinite linear',
+  			'border-beam': 'border-beam calc(var(--duration)*1s) infinite linear'
   		},
   		backgroundImage: {
   			conic: 'conic-gradient(from var(--angle), transparent 70%, hsl(var(--primary)))'

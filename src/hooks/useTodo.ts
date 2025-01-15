@@ -11,6 +11,7 @@ import {
 export const useTodos = (filter?: string) => {
   const queryKey = ["todos", filter];
   return useQuery<Todo[], Error>(queryKey, () => getTodos(filter), {
+    keepPreviousData: true,
     onError: (error) => {
       console.error("Error fetching todos:", error.message);
     },
